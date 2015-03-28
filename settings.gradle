@@ -1,1 +1,1 @@
-include ':app', ':md5demo'
+include ':app'
