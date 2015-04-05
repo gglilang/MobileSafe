@@ -22,4 +22,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></com.lilang.mobilesafe.ui.SettingItemView>
 
+    <com.lilang.mobilesafe.ui.SettingItemView
+        lilang:title1="设置显示号码归属地"
+        lilang:desc_on="显示号码归属地已经开启"
+        lilang:desc_off="显示号码归属地已经关闭"
+        android:id="@+id/siv_show_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.lilang.mobilesafe.ui.SettingItemView>
+
+    <com.lilang.mobilesafe.ui.SettingClickView
+        android:id="@+id/scv_changebg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.lilang.mobilesafe.ui.SettingClickView>
+
 </LinearLayout>

@@ -61,6 +61,10 @@ public class HomeActivity extends Activity {
                     case 0: //进入手机防盗页面
                         showLostFindDialog();
                         break;
+                    case 7: //进入高级工具
+                        Intent intent7 = new Intent(HomeActivity.this, AtoolsActivity.class);
+                        startActivity(intent7);
+                        break;
                 }
             }
         });
