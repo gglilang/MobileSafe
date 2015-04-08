@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -66,6 +67,7 @@ public class AddressService extends Service {
     }
 
     private WindowManager.LayoutParams params;
+    long[] mHits = new long[2];
 
     /**
      * 自定义土司
@@ -77,7 +79,17 @@ public class AddressService extends Service {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "控件被点击了");
+                //双击事件的实现
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+                mHits[mHits.length -  1] = SystemClock.uptimeMillis();
+                if(mHits[0] >= (SystemClock.uptimeMillis() - 500)){
+                    //双击居中了。。。
+                    params.x = wm.getDefaultDisplay().getWidth() / 2 - view.getWidth() / 2;
+                    wm.updateViewLayout(view, params);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt("lastx", params.x);
+                    editor.commit();
+                }
             }
         });
 

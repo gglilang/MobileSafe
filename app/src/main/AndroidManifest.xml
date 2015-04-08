@@ -15,6 +15,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <application
         android:allowBackup="true"
@@ -40,6 +43,7 @@
         <activity android:name=".SelectContactActivity" />
         <activity android:name=".AtoolsActivity" />
         <activity android:name=".NumberAddressQueryActivity" />
+        <activity android:name=".CallSmsSafeActivity" />
 
         <receiver
             android:name=".receiver.BootCompleteReceiver"
@@ -81,8 +85,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-
-
+        <service
+            android:name=".service.CallSmsSafeService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.lilang.mobilesafe.service.AddressService;
+import com.lilang.mobilesafe.service.CallSmsSafeService;
 import com.lilang.mobilesafe.ui.ServiceUtils;
 import com.lilang.mobilesafe.ui.SettingClickView;
 import com.lilang.mobilesafe.ui.SettingItemView;
@@ -26,6 +27,10 @@ public class SettingActivity extends Activity {
     private SettingItemView siv_show_address;
     private Intent showAddress;
 
+    //黑名单拦截设置
+    private SettingItemView siv_callsms_safe;
+    private Intent callSmsSafeIntent;
+
     //设置归属地显示框背景
     private SettingClickView scv_changebg;
 
@@ -40,6 +45,9 @@ public class SettingActivity extends Activity {
         else{
             siv_show_address.setChecked(false);
         }
+
+        boolean isCallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this, "com.lilang.mobilesafe.service.CallSmsSafeService");
+        siv_callsms_safe.setChecked(isCallSmsServiceRunning);
     }
 
     @Override
@@ -101,6 +109,24 @@ public class SettingActivity extends Activity {
                     //打开显示号码归属地
                     siv_show_address.setChecked(true);
                     startService(showAddress);
+                }
+            }
+        });
+
+        //黑名单拦截设置
+        siv_callsms_safe = (SettingItemView) findViewById(R.id.siv_callsms_safe);
+        callSmsSafeIntent = new Intent(this, CallSmsSafeService.class);
+        siv_callsms_safe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(siv_callsms_safe.isChecked()){
+                    //关闭显示号码归属地
+                    siv_callsms_safe.setChecked(false);
+                    stopService(callSmsSafeIntent);
+                }else{
+                    //打开显示号码归属地
+                    siv_callsms_safe.setChecked(true);
+                    startService(callSmsSafeIntent);
                 }
             }
         });
