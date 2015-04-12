@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -60,13 +62,17 @@ public class SplashActivity extends Activity {
         tv_update_info = (TextView) findViewById(R.id.tv_update_info);
         boolean update = sp.getBoolean("update", true);
 
+        //安装快捷方式
+        installShortCut();
+
+
         //拷贝数据库
         copyDB();
 
-        if(update){
+        if (update) {
             //检查升级
             checkUpdate();
-        }else{
+        } else {
             //自动升级已经关闭
             handler.postDelayed(new Runnable() {
                 @Override
@@ -83,23 +89,46 @@ public class SplashActivity extends Activity {
     }
 
     /**
+     * 创建快捷方式图标
+     */
+    private void installShortCut() {
+        boolean shortcut = sp.getBoolean("shortcut", false);
+        if (shortcut) return;
+        SharedPreferences.Editor editor = sp.edit();
+        //发送广播意图，告诉桌面要创建快捷方式
+        Intent intent = new Intent();
+        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //快捷方式，要包含3个重要的信息 1.名称 2.图标， 2.干什么事情
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机卫士");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        //桌面点击图标对应的意图
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setAction("android.intent.action.MAIN");
+        shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+        shortcutIntent.setClassName(getPackageName(), "com.lilang.mobilesafe.SplashActivity");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        sendBroadcast(intent);
+        editor.putBoolean("shortcut", true);
+        editor.commit();
+    }
+
+    /**
      * 吧address.db这个数据库拷贝到data/data/<包名>/files/address.db
      */
     private void copyDB() {
         //只要拷贝了一个次，就不需要再拷贝
         try {
             File file = new File(getFilesDir(), "address.db");
-            if(file.exists() && file.length() > 0){
+            if (file.exists() && file.length() > 0) {
                 //已经拷贝过了，不需要拷贝
                 Log.i(TAG, "不需要拷贝");
 
-            }
-            else{
+            } else {
                 InputStream is = getAssets().open("address.db");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;
-                while((len = is.read(buffer)) != -1){
+                while ((len = is.read(buffer)) != -1) {
                     fos.write(buffer, 0, len);
                 }
                 is.close();
@@ -115,7 +144,7 @@ public class SplashActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case SHOW_UPDATE_DIALOG:    //显示升级的对话框
                     Log.i(TAG, "显示升级的对话框");
                     showUpdateDialog();
@@ -157,10 +186,10 @@ public class SplashActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //升级代码
-                if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     FinalHttp http = new FinalHttp();
                     //mnt/sdcard/update.apk
-                    http.download(apkurl, Environment.getExternalStorageDirectory().getAbsolutePath()+"/mobilesafe2.0.apk",
+                    http.download(apkurl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/mobilesafe2.0.apk",
                             new AjaxCallBack<File>() {
                                 @Override
                                 public void onFailure(Throwable t, int errorNo, String strMsg) {
@@ -197,7 +226,7 @@ public class SplashActivity extends Activity {
                                     startActivity(intent);
                                 }
                             });
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), "没有sdcard，请安装再试试", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -272,12 +301,12 @@ public class SplashActivity extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     mes.what = JSON_ERROR;
-                }finally {
+                } finally {
                     long endTime = System.currentTimeMillis();
                     //我们花了多少时间
                     long dTime = endTime - startTime;
                     //20000
-                    if(dTime < 2000){
+                    if (dTime < 2000) {
                         try {
                             Thread.sleep(2000 - dTime);
                         } catch (InterruptedException e) {

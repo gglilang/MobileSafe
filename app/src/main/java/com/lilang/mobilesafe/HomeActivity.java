@@ -61,6 +61,13 @@ public class HomeActivity extends Activity {
                     case 1: //加载黑名单拦截页面
                         intent = new Intent(HomeActivity.this, CallSmsSafeActivity.class);
                         startActivity(intent);
+                    case 2: //软件管理器
+                        intent = new Intent(HomeActivity.this, AppManagerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 3: //进程管理器
+                        intent = new Intent(HomeActivity.this, TaskManagerActivity.class);
+                        startActivity(intent);
                         break;
                     case 7: //进入高级工具
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
