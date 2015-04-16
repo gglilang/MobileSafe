@@ -35,8 +35,9 @@
     </RelativeLayout>
 
     <FrameLayout
+        android:layout_weight="100"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp">
 
         <LinearLayout
             android:id="@+id/ll_loading"
@@ -68,6 +69,36 @@
             android:background="#ff888888"
             android:text="用户应用程序："/>
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:text="全选"
+            android:onClick="selectAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <Button
+            android:text="反选"
+            android:onClick="selectOppo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <Button
+            android:onClick="killAll"
+            android:text="清理"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <Button
+            android:onClick="enterSetting"
+            android:text="设置"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        </LinearLayout>
 
 
 </LinearLayout>

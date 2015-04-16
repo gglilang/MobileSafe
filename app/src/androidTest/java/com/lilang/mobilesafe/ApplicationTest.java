@@ -6,6 +6,8 @@ import android.test.ApplicationTestCase;
 import com.lilang.mobilesafe.db.BlackNumberDBOpenHelper;
 import com.lilang.mobilesafe.db.dao.BlackNumberDao;
 import com.lilang.mobilesafe.domain.BlackNumberInfo;
+import com.lilang.mobilesafe.domain.TaskInfo;
+import com.lilang.mobilesafe.engine.TaskInfoProvider;
 
 import java.util.List;
 import java.util.Random;
@@ -51,6 +53,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         BlackNumberDao dao = new BlackNumberDao(getContext());
         boolean result = dao.find("110");
         assertEquals(true, result);
+    }
+
+    public void testGetTaskInfos() throws Exception{
+        List<TaskInfo> infos = TaskInfoProvider.getTaskInfos(getContext());
+        for(TaskInfo info : infos){
+            System.out.println(info.toString());
+        }
     }
 
 }
