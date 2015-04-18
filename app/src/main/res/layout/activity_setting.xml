@@ -43,5 +43,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></com.lilang.mobilesafe.ui.SettingItemView>
 
+    <com.lilang.mobilesafe.ui.SettingItemView
+        lilang:title1="程序锁设置"
+        lilang:desc_on="看门狗已经开启"
+        lilang:desc_off="看门狗已经关闭"
+        android:id="@+id/siv_watch_dog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.lilang.mobilesafe.ui.SettingItemView>
+
 
 </LinearLayout>

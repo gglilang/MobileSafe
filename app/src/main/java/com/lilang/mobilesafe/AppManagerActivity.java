@@ -3,7 +3,6 @@ package com.lilang.mobilesafe;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -22,7 +21,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lilang.mobilesafe.db.dao.AppLockDao;
 import com.lilang.mobilesafe.domain.AppInfo;
 import com.lilang.mobilesafe.engine.AppInfoProvider;
 import com.lilang.mobilesafe.utils.DensityUtil;
@@ -79,14 +78,17 @@ public class AppManagerActivity extends Activity implements View.OnClickListener
     private LinearLayout ll_share;
 
     //被点击的条目
-    AppInfo appInfo;
+    private AppInfo appInfo;
 
-    AppManagerAdapter adapter;
+    private AppManagerAdapter adapter;
+
+    private AppLockDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
+        dao = new AppLockDao(this);
         tv_avail_rom = (TextView) findViewById(R.id.tv_avail_rom);
         tv_avail_sd = (TextView) findViewById(R.id.tv_avail_sd);
         tv_status = (TextView) findViewById(R.id.tv_status);
@@ -176,6 +178,38 @@ public class AppManagerActivity extends Activity implements View.OnClickListener
                 set.addAnimation(aa);
                 contentView.startAnimation(set);
             }
+        });
+
+        //程序锁设置条目长点击的事件监听器
+        lv_app_manager.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {  //显示的是应用程序有多少个的小标签
+                    return true;
+                } else if (position == (userAppInfos.size() + 1)) {
+                    return true;
+                } else if (position <= userAppInfos.size()) {  //用户程序
+                    int newPosition = position - 1;
+                    appInfo = userAppInfos.get(newPosition);
+                } else {  //系统程序
+                    int newPosition = position - userAppInfos.size() - 1 - 1;
+                    appInfo = systemAppInfos.get(newPosition);
+                }
+                ViewHolder holder = (ViewHolder) view.getTag();
+                //判断条目是否存在程序锁数据库里面
+                if(dao.find(appInfo.getPackname())){
+                    //被锁定的程序，解除锁定，更新界面为开锁
+                    dao.delete(appInfo.getPackname());
+                    holder.iv_status.setImageResource(R.drawable.unlock);
+                }else{
+                    //锁定程序，更新界面为关闭的锁
+                    dao.add(appInfo.getPackname());
+                    holder.iv_status.setImageResource(R.drawable.lock);
+                }
+
+                return true;
+            }
+
         });
 
     }
@@ -345,18 +379,25 @@ public class AppManagerActivity extends Activity implements View.OnClickListener
             } else {
                 view = View.inflate(AppManagerActivity.this, R.layout.list_item_appinfo, null);
                 holder = new ViewHolder();
-                holder.icon = (ImageView) view.findViewById(R.id.iv_app_icon);
+                holder.iv_icon = (ImageView) view.findViewById(R.id.iv_app_icon);
                 holder.tv_name = (TextView) view.findViewById(R.id.tv_app_name);
                 holder.tv_location = (TextView) view.findViewById(R.id.tv_app_location);
+                holder.iv_status = (ImageView) view.findViewById(R.id.iv_status);
                 view.setTag(holder);
             }
 
-            holder.icon.setImageDrawable(appInfo.getIcon());
+            holder.iv_icon.setImageDrawable(appInfo.getIcon());
             holder.tv_name.setText(appInfo.getName());
             if (appInfo.isInRom()) {
                 holder.tv_location.setText("手机内存");
             } else {
                 holder.tv_location.setText("外部存储");
+            }
+
+            if(dao.find(appInfo.getPackname())){
+                holder.iv_status.setImageResource(R.drawable.lock);
+            }else{
+                holder.iv_status.setImageResource(R.drawable.unlock);
             }
 
             return view;
@@ -366,7 +407,8 @@ public class AppManagerActivity extends Activity implements View.OnClickListener
     static class ViewHolder {
         TextView tv_name;
         TextView tv_location;
-        ImageView icon;
+        ImageView iv_icon;
+        ImageView iv_status;
     }
 
     /**

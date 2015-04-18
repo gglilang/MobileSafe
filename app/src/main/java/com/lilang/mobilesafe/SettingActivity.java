@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.lilang.mobilesafe.service.AddressService;
 import com.lilang.mobilesafe.service.CallSmsSafeService;
+import com.lilang.mobilesafe.service.WatchDogService;
 import com.lilang.mobilesafe.ui.ServiceUtils;
 import com.lilang.mobilesafe.ui.SettingClickView;
 import com.lilang.mobilesafe.ui.SettingItemView;
@@ -31,6 +32,10 @@ public class SettingActivity extends Activity {
     private SettingItemView siv_callsms_safe;
     private Intent callSmsSafeIntent;
 
+    //设置是否开启程序锁
+    private SettingItemView siv_watch_dog;
+    private Intent watchDogIntent;
+
     //设置归属地显示框背景
     private SettingClickView scv_changebg;
 
@@ -46,8 +51,12 @@ public class SettingActivity extends Activity {
             siv_show_address.setChecked(false);
         }
 
+        //设置服务是否已经开启
         boolean isCallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this, "com.lilang.mobilesafe.service.CallSmsSafeService");
         siv_callsms_safe.setChecked(isCallSmsServiceRunning);
+
+        boolean isWatchDogServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this, "com.lilang.mobilesafe.service.WatchDogService");
+        siv_watch_dog.setChecked(isWatchDogServiceRunning);
     }
 
     @Override
@@ -160,6 +169,25 @@ public class SettingActivity extends Activity {
                 });
                 builder.setNegativeButton("取消", null);
                 builder.show();
+            }
+        });
+
+
+        //程序锁设置
+        siv_watch_dog = (SettingItemView) findViewById(R.id.siv_watch_dog);
+        watchDogIntent = new Intent(this, WatchDogService.class);
+        siv_watch_dog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(siv_watch_dog.isChecked()){
+                    //关闭看门狗
+                    siv_watch_dog.setChecked(false);
+                    stopService(watchDogIntent);
+                }else{
+                    //打开看门狗显示号码归属地
+                    siv_watch_dog.setChecked(true);
+                    startService(watchDogIntent);
+                }
             }
         });
 
