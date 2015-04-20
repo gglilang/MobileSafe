@@ -67,7 +67,8 @@ public class SplashActivity extends Activity {
 
 
         //拷贝数据库
-        copyDB();
+        copyDB("address.db");
+        copyDB("antivirus.db");
 
         if (update) {
             //检查升级
@@ -115,16 +116,16 @@ public class SplashActivity extends Activity {
     /**
      * 吧address.db这个数据库拷贝到data/data/<包名>/files/address.db
      */
-    private void copyDB() {
+    private void copyDB(String filename) {
         //只要拷贝了一个次，就不需要再拷贝
         try {
-            File file = new File(getFilesDir(), "address.db");
+            File file = new File(getFilesDir(), filename);
             if (file.exists() && file.length() > 0) {
                 //已经拷贝过了，不需要拷贝
                 Log.i(TAG, "不需要拷贝");
 
             } else {
-                InputStream is = getAssets().open("address.db");
+                InputStream is = getAssets().open(filename);
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;

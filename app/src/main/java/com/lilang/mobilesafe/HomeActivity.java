@@ -69,6 +69,18 @@ public class HomeActivity extends Activity {
                         intent = new Intent(HomeActivity.this, TaskManagerActivity.class);
                         startActivity(intent);
                         break;
+                    case 4: //流量管理器
+                        intent = new Intent(HomeActivity.this, TrafficManagerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 5: //手机杀毒
+                        intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 6: //缓存清理
+                        intent = new Intent(HomeActivity.this, CleanCacheActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7: //进入高级工具
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);
@@ -77,7 +89,6 @@ public class HomeActivity extends Activity {
                         intent = new Intent(HomeActivity.this, SettingActivity.class);
                         startActivity(intent);
                         break;
-
 
                 }
             }
